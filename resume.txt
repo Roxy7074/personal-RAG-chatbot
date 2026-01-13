@@ -1,0 +1,73 @@
+Roxy Story
+714-392-7722 
+story.r@northeastern.edu 
+Orange County, CA 
+Boston, MA
+
+
+Education
+Khoury College of Computer Science, Northeastern University August 2024 - April 2028
+Bachelor’s of Science in Computer Science and Business Administration 
+GPA: 3.6 
+Dean’s List
+Relevant Courses: Object-Oriented Design, Algorithms and Data, Computer Systems, Engineering-LLM Integrated Systems,
+Introduction to Databases, Discrete Structures, Fundamentals of CS 1 and 2, Calculus for Science/Engineering, Financial
+Accounting, Financial Management
+
+
+Relevant Skills
+Programming Languages: Python, Java, C, SQL, x86-64 Assembly, DrRacket, JavaScript
+AI/ML Tools & Frameworks: PyTorch, Transformers, LiteLLM, NumPy, Pandas, OpenAI API (DALL-E 3), Matplotlib
+Developer Tools: Git/GitHub, Linux/Unix, MySQL, Pytest, JUnit, Jupyter, Google Colab, VS Code, IntelliJ, Eclipse, LaTeX,
+Microsoft Excel, Canva, Adobe
+Soft Skills: Time Management, Cross-Functional Collaboration, Team Leadership, Public Speaking, Problem Solving, Independent
+Work, Attention to Detail, Mentorship, Presentation
+
+
+Projects
+AI-Powered Template Generator September 2025 – Present
+Building a Python system integrating pycairo graphics library with OpenAI DALL-E 3 API through efficient inter-process
+communication and memory management for automated graphic generation for NEU Blockchain marketing team.
+Developed modular graphics pipeline with custom hex-to-RGB conversion, image layering, and text alignment using pycairo surface
+manipulation to enable quick template generation with consistent branding, which has cut back production time by 95%.
+Created Python-based fallback architecture using Pillow library with gradient algorithms and geometric overlays to ensure reliable,
+cost-effective operation independent of external API availability.
+Calendar and Scheduling Application May 2025 – June 2025
+Built a calendar app using MVC and abstraction to track assignments and projects, filtering complex dates and times while
+supporting strategy-based scheduling through a repository layer within the controller.
+Streamlined academic planning by implementing reusable components that enable efficient time management and conflict detection,
+reducing scheduling errors and improving productivity for student users.
+Stock Trading Simulator January 2025 – May 2025
+Co-built a normalized SQL + Python stock simulator in a team of 4 with Yahoo Finance API for real-time market data processing
+and ROI/diversification analytics to provide investors with accurate market insights.
+Developed comprehensive test methods for simulator.py and import stock data.py, ensuring reliable trade execution and accurate
+financial calculations across database operations.
+Validated real-time Yahoo Finance API data handling through automated testing, preventing calculation errors in portfolio metrics
+and transaction records.
+
+
+Leadership
+Executive Board Member and Director of Marketing, NEU Blockchain January 2025 - Present
+Engineered a centralized Notion workspace that assigned roles to a team of 4 to plan 5 social media platform campaigns, tracking
+marketing strategies, resulting in a doubled amount of new memberships.
+Contributed to DeFi–AI research and authored concise blockchain primers to gain knowledge and teach the material to students,
+while also developing educational presentations for new members and running learning-focused events.
+Invested in various cryptocurrencies through trend analysis and market research, while studying the integration of AI into crypto
+and financial technology to maximize efficiency and identify emerging opportunities in decentralized finance.
+Artificial Intelligence Researcher and Developer, NEU AI August 2024 – Present
+Actively working in a research lab team to create Uncertainty-Aware AI Systems handling and completed a research paper on
+Natural Language Processing and uncertainty in AI models, specifically focusing on improving emotional intelligence in models in
+order to provide support for human-conversation while being able to recognize bias by creating personalized dialogue flows and
+designing adaptive conversational strategies.
+Completed AI learning bootcamp, training courses, and certificates: Navigating AI Ethical Challenges and Risks Course, studied the
+mathematics of AI, programming neural networks, and reading groups in order to understand the foundation of AI.
+Self studied AI techniques like probabilistic modeling and Bayesian Neural Networks in order to explore weakly-supervised learning
+approaches, improve context understanding in models, and engineer large-language models into projects.
+
+
+Experience
+Financial Data Manager for Airbnb Property Owners, Anaheim, CA January 2022 - June 2024
+Optimized a financial database system managing data for 5+ properties, implementing efficient data categorization schemas for
+revenue and expense tracking that improved data retrieval speeds and enabled stakeholders to make faster business decisions.
+Automated financial reporting workflows by leveraging QuickBooks integration capabilities, reducing manual data entry errors and
+streamlining report generation processes for property owners during regulatory compliance periods.
