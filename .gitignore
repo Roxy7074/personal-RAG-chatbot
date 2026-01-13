@@ -8,8 +8,6 @@ __pycache__/
 venv/
 .venv/
 
-# FAISS index (optional - include if you want to rebuild each time)
-faiss_index.bin
 
 # IDE
 .vscode/
