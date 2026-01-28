@@ -3,3 +3,6 @@ sentence-transformers
 streamlit
 openai
 python-dotenv
+PyPDF2
+pdfplumber
+python-docx
