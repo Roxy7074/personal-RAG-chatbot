@@ -135,13 +135,49 @@ st.markdown("""
     .streamlit-expanderHeader {
         background: #1a1a1a;
         border-radius: 10px;
-        color: #cccccc !important;
+        color: #b0b0b0 !important;
+    }
+    
+    .streamlit-expanderHeader p, .streamlit-expanderHeader span {
+        color: #b0b0b0 !important;
+    }
+    
+    [data-testid="stExpander"] summary span {
+        color: #b0b0b0 !important;
     }
     
     .streamlit-expanderContent {
         background: rgba(30, 30, 30, 0.9);
         border-radius: 0 0 10px 10px;
         border: 1px solid #333333;
+    }
+    
+    /* File uploader label styling */
+    .stFileUploader label, .stFileUploader p, .stFileUploader span {
+        color: #b0b0b0 !important;
+    }
+    
+    [data-testid="stFileUploader"] label {
+        color: #b0b0b0 !important;
+    }
+    
+    /* Metric label styling */
+    [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] p {
+        color: #b0b0b0 !important;
+    }
+    
+    .stMetric label {
+        color: #b0b0b0 !important;
+    }
+    
+    /* Caption styling (small helper text) */
+    .stCaption, [data-testid="stCaptionContainer"], .stCaption p {
+        color: #b0b0b0 !important;
+    }
+    
+    /* Small text and secondary labels */
+    small, .st-emotion-cache-1gulkj5 {
+        color: #b0b0b0 !important;
     }
     
     /* Spinner styling */
