@@ -167,7 +167,7 @@ class ResumeManager:
             Tuple of (resume_id, metadata).
 
         Raises:
-            ValueError: If maximum resume limit is reached or file processing fails.
+            ValueError: If file processing fails.
         """
         # No limit on number of resumes
         

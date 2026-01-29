@@ -1,6 +1,6 @@
 """
 Personal RAG Chatbot with Resume Analysis capabilities.
-Supports uploading up to 20 resumes, cross-resume queries, and conversation memory.
+Supports uploading resumes, cross-resume queries, and conversation memory.
 """
 import streamlit as st
 import faiss
