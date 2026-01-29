@@ -1,0 +1,7 @@
+[server]
+# Set max upload size to 1GB (1000 MB)
+maxUploadSize = 1000
+
+[browser]
+# Disable usage stats
+gatherUsageStats = false
