@@ -122,6 +122,94 @@ class ResumeProcessor:
         else:
             raise ValueError(f"Unsupported file type: {filename}. Supported types: PDF, DOCX, TXT")
 
+    def validate_is_resume(self, text: str) -> Tuple[bool, str]:
+        """
+        Validate whether a document is a resume/CV.
+        This acts as a guardrail to reject non-resume documents.
+
+        Args:
+            text: The extracted text content of the document.
+
+        Returns:
+            A tuple of (is_valid, reason) where is_valid is True if it's a resume,
+            and reason explains why it was accepted or rejected.
+        """
+        # Quick heuristic check first - resumes typically have certain patterns
+        text_lower = text.lower()
+        resume_indicators = [
+            'experience', 'education', 'skills', 'employment', 'work history',
+            'professional', 'resume', 'curriculum vitae', 'cv', 'objective',
+            'summary', 'qualifications', 'references', 'certifications'
+        ]
+        indicator_count = sum(1 for indicator in resume_indicators if indicator in text_lower)
+        
+        # If very few indicators, likely not a resume
+        if indicator_count < 2:
+            return False, "Document does not appear to be a resume - missing typical resume sections like experience, education, or skills."
+
+        # Use LLM for more accurate validation
+        prompt = f"""Analyze this document and determine if it is a resume or CV (curriculum vitae).
+
+Document text (first 2500 characters):
+{text[:2500]}
+
+A resume/CV MUST contain:
+- A person's name (usually at the top)
+- Work experience OR education history
+- Contact information OR skills section
+
+Documents that are NOT resumes include:
+- Articles, essays, or research papers
+- Business documents, contracts, or reports
+- Cover letters (these are separate from resumes)
+- Random text or unrelated content
+
+Respond with EXACTLY this format (no other text):
+IS_RESUME: YES or NO
+REASON: One sentence explanation"""
+
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a document classifier. Your job is to determine if a document is a resume/CV. Be strict - only accept actual resumes that contain a person's professional history."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                temperature=0.1,
+                max_tokens=100
+            )
+            
+            response_text = response.choices[0].message.content.strip()
+            lines = response_text.split('\n')
+            
+            is_resume = False
+            reason = "Could not determine document type."
+            
+            for line in lines:
+                if ':' in line:
+                    key, value = line.split(':', 1)
+                    key = key.strip().upper()
+                    value = value.strip()
+                    
+                    if key == "IS_RESUME":
+                        is_resume = value.upper() == "YES"
+                    elif key == "REASON":
+                        reason = value
+            
+            return is_resume, reason
+            
+        except Exception as e:
+            # If LLM validation fails, fall back to heuristic result
+            if indicator_count >= 3:
+                return True, "Validated by heuristic check (LLM unavailable)."
+            return False, f"Validation failed: {str(e)}"
+
     def generate_metadata(self, resume_text: str, filename: str) -> Dict:
         """
         Generate metadata for a resume using LLM analysis.

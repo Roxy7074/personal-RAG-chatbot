@@ -326,7 +326,7 @@ with tab1:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant answering questions about Roxy Story based on her resume and personal information. Only use the provided context to answer. Be conversational and friendly."
+                    "content": "You are a helpful assistant answering questions about Roxy Story based on her resume and personal information. Only use the provided context to answer. If someone asks you a question about Roxy, respond as if you are Roxy(in first-person).Be conversational and friendly."
                 },
                 {
                     "role": "user",
@@ -396,19 +396,49 @@ with tab2:
                 progress_bar = st.progress(0)
                 status_text = st.empty()
                 
+                # Import processor for validation
+                from resume_processor import ResumeProcessor
+                validator = ResumeProcessor()
+                
+                accepted_count = 0
+                rejected_count = 0
+                
                 for i, uploaded_file in enumerate(uploaded_files):
                     try:
-                        status_text.text(f"Processing: {uploaded_file.name}")
+                        # Step 1: Extract text
+                        status_text.text(f"Validating: {uploaded_file.name}")
                         file_bytes = uploaded_file.read()
-                        resume_id, metadata = resume_manager.add_resume(file_bytes, uploaded_file.name)
-                        st.success(f"✅ Added: {metadata['candidate_name']}")
+                        extracted_text = validator.extract_text(file_bytes, uploaded_file.name)
+                        
+                        # Step 2: Validate it's a resume (guardrail)
+                        is_valid, reason = validator.validate_is_resume(extracted_text)
+                        
+                        if not is_valid:
+                            # Reject non-resume files
+                            st.error(f"❌ Rejected '{uploaded_file.name}': {reason}")
+                            rejected_count += 1
+                        else:
+                            # Step 3: Only process valid resumes
+                            status_text.text(f"Processing: {uploaded_file.name}")
+                            # Reset file pointer for resume_manager
+                            resume_id, metadata = resume_manager.add_resume(file_bytes, uploaded_file.name)
+                            st.success(f"✅ Added: {metadata['candidate_name']}")
+                            accepted_count += 1
+                            
                     except Exception as e:
                         st.error(f"❌ Failed to process {uploaded_file.name}: {str(e)}")
+                        rejected_count += 1
                     
                     progress_bar.progress((i + 1) / len(uploaded_files))
                 
-                status_text.text("Processing complete!")
-                st.rerun()
+                # Show summary
+                if accepted_count > 0 or rejected_count > 0:
+                    status_text.text(f"Complete: {accepted_count} accepted, {rejected_count} rejected")
+                else:
+                    status_text.text("Processing complete!")
+                    
+                if accepted_count > 0:
+                    st.rerun()
         
         # Display current resume count
         st.markdown("---")
