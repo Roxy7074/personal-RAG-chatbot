@@ -131,6 +131,26 @@ st.markdown("""
         line-height: 1.6;
     }
     
+    /* Ensure all text in markdown containers is light colored */
+    .stMarkdown, .stMarkdown div, .stMarkdown span, .stMarkdown li, .stMarkdown ul, .stMarkdown ol {
+        color: #e0e0e0 !important;
+    }
+    
+    .stMarkdown strong, .stMarkdown b {
+        color: #ffffff !important;
+    }
+    
+    /* List styling */
+    .stMarkdown ul, .stMarkdown ol {
+        color: #e0e0e0 !important;
+        padding-left: 20px;
+    }
+    
+    .stMarkdown li {
+        color: #e0e0e0 !important;
+        margin-bottom: 5px;
+    }
+    
     /* Expander styling */
     .streamlit-expanderHeader {
         background: #1a1a1a;
@@ -178,6 +198,16 @@ st.markdown("""
     /* Small text and secondary labels */
     small, .st-emotion-cache-1gulkj5 {
         color: #b0b0b0 !important;
+    }
+    
+    /* Global text color override for dark theme */
+    .stApp p, .stApp span, .stApp div, .stApp li {
+        color: #e0e0e0;
+    }
+    
+    /* Ensure inline styled elements respect light text */
+    [style*="color: #e0e0e0"], [style*="color:#e0e0e0"] {
+        color: #e0e0e0 !important;
     }
     
     /* Spinner styling */
@@ -230,6 +260,15 @@ st.markdown("""
         border-radius: 15px;
         padding: 15px;
         margin: 10px 0;
+        color: #e0e0e0 !important;
+    }
+    
+    .chat-message *, .chat-message p, .chat-message span, .chat-message div {
+        color: #e0e0e0 !important;
+    }
+    
+    .chat-message strong, .chat-message b {
+        color: #ffffff !important;
     }
     
     .user-message {
@@ -239,6 +278,15 @@ st.markdown("""
     
     .assistant-message {
         background: rgba(30, 30, 30, 0.9);
+    }
+    
+    /* Response box text styling - ensure all nested elements are light */
+    .stMarkdown [style*="background: rgba(30, 30, 30"] * {
+        color: #e0e0e0 !important;
+    }
+    
+    .stMarkdown [style*="background: rgba(30, 30, 30"] strong {
+        color: #ffffff !important;
     }
 </style>
 """, unsafe_allow_html=True)
