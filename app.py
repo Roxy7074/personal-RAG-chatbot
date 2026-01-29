@@ -373,7 +373,7 @@ with tab2:
     
     with col1:
         st.subheader("📤 Upload Resumes")
-        st.caption(f"Upload up to {resume_manager.MAX_RESUMES} resumes (PDF, DOCX, or TXT)")
+        st.caption("Upload resumes (PDF, DOCX, or TXT)")
         
         # File uploader
         uploaded_files = st.file_uploader(
@@ -385,13 +385,6 @@ with tab2:
         
         # Process uploaded files
         if uploaded_files:
-            current_count = resume_manager.get_resume_count()
-            remaining_slots = resume_manager.MAX_RESUMES - current_count
-            
-            if len(uploaded_files) > remaining_slots:
-                st.warning(f"⚠️ Only {remaining_slots} slots available. First {remaining_slots} files will be processed.")
-                uploaded_files = uploaded_files[:remaining_slots]
-            
             if st.button("📥 Process Resumes", type="primary"):
                 progress_bar = st.progress(0)
                 status_text = st.empty()
@@ -443,7 +436,7 @@ with tab2:
         # Display current resume count
         st.markdown("---")
         count = resume_manager.get_resume_count()
-        st.metric("Resumes Loaded", f"{count} / {resume_manager.MAX_RESUMES}")
+        st.metric("Resumes Loaded", count)
         
         # Clear buttons
         if count > 0:

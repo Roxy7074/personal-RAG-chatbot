@@ -84,7 +84,7 @@ class ResumeManager:
     supporting cross-resume queries and context-aware conversations.
     """
 
-    MAX_RESUMES = 20
+    MAX_RESUMES = None  # No limit on number of resumes
 
     def __init__(self):
         """Initialize the ResumeManager with embedding model and storage structures."""
@@ -169,8 +169,7 @@ class ResumeManager:
         Raises:
             ValueError: If maximum resume limit is reached or file processing fails.
         """
-        if len(self.resumes) >= self.MAX_RESUMES:
-            raise ValueError(f"Maximum of {self.MAX_RESUMES} resumes reached. Remove some resumes first.")
+        # No limit on number of resumes
         
         # Process the resume
         text, metadata = self.processor.process_resume(file_bytes, filename)
