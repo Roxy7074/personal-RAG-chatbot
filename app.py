@@ -251,17 +251,30 @@ st.markdown("""
         color: var(--text-muted) !important;
     }
     
-    /* buttons - gradient style with glow */
+    /* buttons - gradient style with glow - ENSURE WHITE TEXT */
     .stButton > button {
         background: var(--gradient-button) !important;
-        color: white !important;
+        color: #ffffff !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 0.8rem 2rem !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 4px 20px rgba(34, 211, 238, 0.3) !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Force all text inside buttons to be white */
+    .stButton > button * {
+        color: #ffffff !important;
+    }
+    
+    .stButton > button p,
+    .stButton > button span,
+    .stButton > button div {
+        color: #ffffff !important;
+        font-weight: 700 !important;
     }
     
     .stButton > button:hover {
@@ -275,6 +288,11 @@ st.markdown("""
         color: var(--accent-cyan) !important;
         border: 2px solid var(--accent-cyan) !important;
         box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    .stButton > button[kind="secondary"] * {
+        color: var(--accent-cyan) !important;
     }
     
     .stButton > button[kind="secondary"]:hover {
@@ -282,32 +300,97 @@ st.markdown("""
         box-shadow: var(--shadow-glow-cyan) !important;
     }
     
-    /* file uploader */
+    /* file uploader - responsive and properly contained */
     .stFileUploader {
-        background: var(--bg-card);
-        border-radius: 16px;
-        padding: 1.5rem;
-        border: 2px dashed rgba(34, 211, 238, 0.4);
-        transition: all 0.3s ease;
+        background: var(--bg-card) !important;
+        border-radius: 16px !important;
+        padding: 1.25rem !important;
+        border: 2px dashed rgba(34, 211, 238, 0.4) !important;
+        transition: all 0.3s ease !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
     }
     
     .stFileUploader:hover {
-        border-color: var(--accent-cyan);
-        box-shadow: var(--shadow-glow-cyan);
+        border-color: var(--accent-cyan) !important;
+        box-shadow: var(--shadow-glow-cyan) !important;
     }
     
     .stFileUploader label {
         color: var(--text-secondary) !important;
     }
     
+    /* File uploader inner content - prevent text overflow */
+    [data-testid="stFileUploader"] {
+        min-width: 0 !important;
+    }
+    
     [data-testid="stFileUploader"] section {
         background: transparent !important;
         border: none !important;
+        min-width: 0 !important;
     }
     
+    [data-testid="stFileUploader"] section > div {
+        min-width: 0 !important;
+    }
+    
+    /* File uploader drop zone text */
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] {
+        min-width: 0 !important;
+        padding: 1rem !important;
+    }
+    
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] > div {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        min-width: 0 !important;
+    }
+    
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] span,
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] p,
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] small {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        text-align: center !important;
+        max-width: 100% !important;
+    }
+    
+    /* File uploader button */
     [data-testid="stFileUploader"] button {
         background: var(--gradient-button) !important;
-        color: white !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+    }
+    
+    [data-testid="stFileUploader"] button * {
+        color: #ffffff !important;
+    }
+    
+    /* File list in uploader */
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] {
+        background: rgba(34, 211, 238, 0.1) !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
+        margin: 0.25rem 0 !important;
+        min-width: 0 !important;
+    }
+    
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] > div {
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    [data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] span {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        max-width: 100% !important;
+        display: block !important;
     }
     
     /* metrics */
@@ -752,6 +835,62 @@ st.markdown("""
         * {
             transition: none !important;
             animation: none !important;
+        }
+    }
+    
+    /* RESPONSIVE DESIGN - Handle narrow screens */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.5rem !important;
+        }
+        
+        .page-subtitle {
+            font-size: 1rem !important;
+        }
+        
+        .content-card {
+            padding: 1.25rem !important;
+        }
+        
+        .content-card-title {
+            font-size: 1rem !important;
+        }
+        
+        .stFileUploader {
+            padding: 1rem !important;
+        }
+        
+        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] {
+            padding: 0.75rem !important;
+        }
+        
+        [data-testid="stFileUploader"] [data-testid="stFileUploaderDropzone"] span {
+            font-size: 0.85rem !important;
+        }
+        
+        .stButton > button {
+            padding: 0.6rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+    
+    @media (max-width: 500px) {
+        .page-title {
+            font-size: 2rem !important;
+        }
+        
+        .main .block-container {
+            padding: 1rem !important;
+        }
+        
+        .content-card {
+            padding: 1rem !important;
+            border-radius: 16px !important;
+        }
+        
+        .dark-card {
+            padding: 1rem !important;
+            border-radius: 14px !important;
         }
     }
     
