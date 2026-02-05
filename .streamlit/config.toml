@@ -5,3 +5,12 @@ maxUploadSize = 1000
 [browser]
 # Disable usage stats
 gatherUsageStats = false
+
+[theme]
+# Dark theme configuration
+base = "dark"
+primaryColor = "#22d3ee"
+backgroundColor = "#0a0f1a"
+secondaryBackgroundColor = "#1a2332"
+textColor = "#f1f5f9"
+font = "sans serif"
