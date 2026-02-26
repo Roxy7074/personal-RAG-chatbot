@@ -6,3 +6,5 @@ python-dotenv
 PyPDF2
 pdfplumber
 python-docx
+requests
+duckduckgo-search

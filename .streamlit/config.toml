@@ -7,10 +7,10 @@ maxUploadSize = 1000
 gatherUsageStats = false
 
 [theme]
-# Dark theme configuration
-base = "dark"
-primaryColor = "#22d3ee"
-backgroundColor = "#0a0f1a"
-secondaryBackgroundColor = "#1a2332"
-textColor = "#f1f5f9"
+# Light theme configuration
+base = "light"
+primaryColor = "#ad1d6a"
+backgroundColor = "#f6f9ff"
+secondaryBackgroundColor = "#eef3fb"
+textColor = "#14213d"
 font = "sans serif"

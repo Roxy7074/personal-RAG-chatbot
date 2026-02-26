@@ -257,6 +257,63 @@ class ResumeManager:
         
         return results
 
+    def search_resumes_with_metadata(self, query: str, k: int = 6) -> List[Dict]:
+        """
+        enhanced search that returns chunks with full candidate metadata
+        includes formatted text with candidate headers for better context
+        
+        returns list of dicts with text, candidate info, and formatted version
+        """
+        if not self.index or self.index.ntotal == 0:
+            return []
+        
+        query_embedding = self.model.encode([query]).astype('float32')
+        k = min(k, self.index.ntotal)
+        distances, indices = self.index.search(query_embedding, k)
+        
+        results = []
+        seen_candidates = set()
+        
+        for i, idx in enumerate(indices[0]):
+            if idx < len(self.all_chunks):
+                resume_id = self.chunk_to_resume[idx]
+                chunk = self.all_chunks[idx]
+                
+                # get candidate metadata
+                if resume_id in self.resumes:
+                    meta = self.resumes[resume_id]['metadata']
+                    candidate_name = meta['candidate_name']
+                    
+                    result = {
+                        'text': chunk,
+                        'candidate_name': candidate_name,
+                        'current_role': meta.get('current_role', 'Unknown'),
+                        'experience_years': meta.get('experience_years', 0),
+                        'key_skills': meta.get('key_skills', [])[:5],
+                        'distance': float(distances[0][i])
+                    }
+                    
+                    # add candidate header if first chunk from this candidate
+                    if candidate_name not in seen_candidates:
+                        result['formatted_text'] = f"\n=== {candidate_name} ({meta.get('current_role', 'Unknown Role')}) ===\n{chunk}"
+                        seen_candidates.add(candidate_name)
+                    else:
+                        result['formatted_text'] = f"[{candidate_name}]: {chunk}"
+                    
+                    results.append(result)
+                else:
+                    results.append({
+                        'text': chunk,
+                        'formatted_text': chunk,
+                        'candidate_name': 'Unknown',
+                        'current_role': 'Unknown',
+                        'experience_years': 0,
+                        'key_skills': [],
+                        'distance': float(distances[0][i])
+                    })
+        
+        return results
+
     def _build_cross_resume_context(self, query: str) -> str:
         """
         builds context for queries that span multiple resumes
@@ -285,12 +342,12 @@ class ResumeManager:
         
         return candidates_overview + relevant_content
 
-    def query(self, user_query: str, use_memory: bool = True) -> str:
+    def query(self, user_query: str, use_memory: bool = True, system_prompt: str = None) -> str:
         """
         processes a user query and generates a response using rag
         automatically detects if the query is about multiple resumes
         
-        takes the users question
+        takes the users question and optional custom system prompt
         returns the generated response
         """
         if not self.resumes:
@@ -304,39 +361,60 @@ class ResumeManager:
         ]
         is_cross_resume = any(kw in user_query.lower() for kw in cross_resume_keywords)
         
-        # build the appropriate context
+        # detect follow-up queries that need context
+        follow_up_keywords = ["tell me more", "what about", "their", "them", "he ", "she ", "they ", 
+                              "his ", "her ", "elaborate", "continue", "and what", "also"]
+        is_follow_up = any(kw in user_query.lower() for kw in follow_up_keywords)
+        
+        # build the appropriate context with enhanced metadata
         if is_cross_resume:
             context = self._build_cross_resume_context(user_query)
         else:
-            # standard semantic search for single-resume queries
-            search_results = self.search_resumes(user_query, k=4)
-            context = "\n\n".join([chunk for _, chunk, _ in search_results])
+            # use enhanced search with metadata for better context
+            search_results = self.search_resumes_with_metadata(user_query, k=6)
+            context = "\n\n".join([r['formatted_text'] for r in search_results])
+        
+        # use custom system prompt if provided, otherwise use default
+        if system_prompt:
+            system_content = system_prompt
+        else:
+            # build candidates overview for context
+            candidates_overview = self._get_candidates_overview()
+            system_content = f"""You are an expert HR assistant helping analyze a collection of resumes.
+
+=== CANDIDATES IN DATABASE ===
+{candidates_overview}
+
+=== INSTRUCTIONS ===
+- When discussing a candidate, ALWAYS include their full name
+- When comparing candidates, clearly separate information about each person
+- If using pronouns (he/she/they), make sure it's clear who you're referring to
+- When asked follow-up questions, refer back to previously discussed candidates
+- Be objective and cite specific information from their resumes
+- If information is not available, clearly state that
+
+=== RESUME CONTEXT ===
+{context}"""
         
         # set up the messages for the llm
-        messages = [
-            {
-                "role": "system",
-                "content": """you are an expert hr assistant helping analyze a collection of resumes
-you have access to detailed resume information including skills, experience, education, and work history
-when comparing candidates be objective and cite specific information from their resumes
-when asked about specific individuals provide detailed and accurate information
-always base your answers on the provided context and indicate if information is not available"""
-            }
-        ]
+        messages = [{"role": "system", "content": system_content}]
         
-        # add conversation history for context awareness
+        # add conversation history for context awareness (increased from 4 to 8 for better follow-up)
         if use_memory:
-            conv_context = self.conversation.get_context(4)
+            conv_context = self.conversation.get_context(8)
             for msg in conv_context:
                 messages.append(msg)
         
-        # add the current query with context
-        user_message = f"""context from resumes:
-{context}
+        # add the current query
+        if is_follow_up and conv_context:
+            # for follow-ups, remind the LLM about the context
+            user_message = f"""Follow-up question (refer to previously discussed candidates): {user_query}
 
-current question: {user_query}
+Please continue the conversation and answer based on the context above."""
+        else:
+            user_message = f"""Question: {user_query}
 
-please provide a helpful, accurate answer based on the resume information provided"""
+Please provide a helpful, accurate answer. Always specify which candidate you're discussing."""
         
         messages.append({"role": "user", "content": user_message})
         
@@ -357,6 +435,23 @@ please provide a helpful, accurate answer based on the resume information provid
             
         except Exception as e:
             return f"error generating response: {str(e)}"
+
+    def _get_candidates_overview(self) -> str:
+        """
+        creates a quick reference of all candidates for the system prompt
+        """
+        if not self.resumes:
+            return "No candidates in database."
+        
+        lines = []
+        for resume_id, data in self.resumes.items():
+            meta = data['metadata']
+            skills = ', '.join(meta.get('key_skills', [])[:4]) or 'Not specified'
+            lines.append(
+                f"• {meta['candidate_name']}: {meta.get('current_role', 'Unknown')} | "
+                f"{meta.get('experience_years', 'Unknown')} years | Skills: {skills}"
+            )
+        return '\n'.join(lines)
 
     def summarize_resume(self, resume_id: str) -> str:
         """

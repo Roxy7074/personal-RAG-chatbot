@@ -21,9 +21,10 @@ a rag-based chatbot with dual functionality: personal information queries and mu
 ## features
 
 ### personal chat mode
-- query personal information and resume data
-- uses semantic search with faiss for accurate retrieval
-- conversational ai powered by openai
+- Roxy persona: answers as you in first person (e.g. in front of a recruiter)
+- semantic search over your resume and personal data (callable as a tool; model can run it multiple times per turn)
+- tools: weather (Open-Meteo), web search (Tavily or DuckDuckGo), GitHub search (all of GitHub; use "user:USERNAME" to find someone's repos)
+- conversational ai powered by openai with function/tool calling
 
 ### resume analyzer mode
 - upload unlimited resumes (pdf, docx, or txt)
@@ -50,6 +51,13 @@ create a `.env` file with your openai api key:
 ```
 OPENAI_API_KEY=your_api_key_here
 ```
+
+**Optional (Personal Chat tools):** Tools degrade gracefully if not set.
+| variable | purpose |
+|----------|---------|
+| `TAVILY_API_KEY` | Prefer Tavily for web search (otherwise DuckDuckGo is used, no key). Install `tavily-python` if using. |
+| `GITHUB_TOKEN` | Higher GitHub search rate limits (optional). |
+| Open-Meteo | Weather tool uses [Open-Meteo](https://open-meteo.com) — no API key required. |
 
 ### 3 initialize personal data index
 ```bash
@@ -120,6 +128,7 @@ docker run -p 8501:8501 -e OPENAI_API_KEY=your_key rag-chatbot
 
 ```
 ├── app.py                 # main streamlit application
+├── tools.py               # Personal Chat tools (semantic search, weather, web, GitHub)
 ├── embeddata.py           # script to create faiss index
 ├── resume_processor.py    # pdf/docx text extraction and validation
 ├── resume_manager.py      # multi-resume management with faiss
@@ -132,23 +141,20 @@ docker run -p 8501:8501 -e OPENAI_API_KEY=your_key rag-chatbot
 └── README.md
 ```
 
-## usage examples
+## testing the features
 
-### personal chat
-```
-what programming languages does roxy know?
-tell me about roxy's work experience
-what are roxy's hobbies?
-```
+Use these example questions in **Personal Chat** to verify each feature. After a reply, check for the "Used: …" pill under Roxy's message to confirm which tool ran.
 
-### resume analyzer
-```
-who has aws experience?
-summarize john's background
-which candidates have 5+ years of experience?
-compare the technical skills of all candidates
-who would be best for a machine learning role?
-```
+| Feature | Example questions to ask |
+|--------|---------------------------|
+| **Current date** | "What's today's date?" or "What year is it?" |
+| **Semantic search (your resume/personal)** | "What are my skills?" / "What's my background?" / "Where did I go to school?" (Roxy answers from your data; may show "Used: my info".) |
+| **Weather** | "What's the weather in San Francisco today?" / "Is it going to rain in NYC?" (Uses Open-Meteo; no key needed.) |
+| **Web search** | "What's the best movie of 2025 according to Google?" / "Latest news about [topic]." (Uses Tavily if `TAVILY_API_KEY` set, else DuckDuckGo.) |
+| **GitHub search** | "What repos do I have on GitHub?" (Use your real username in `resume.txt` or ask with your username.) / "Find repos by user octocat." (Searches all of GitHub; use "user:USERNAME" when the bot calls the tool.) |
+| **Roxy persona** | "Tell me about yourself." / "Why should we hire you?" (Answers in first person as Roxy.) |
+
+**Resume Analyzer:** Upload 1–2 PDF/DOCX resumes, click **Process Files**, then ask e.g. "Who has Python experience?", "Compare these candidates," or "Summarize [candidate name]." The "About Roxy" blurb at the top uses `resume.txt` when present.
 
 ## accessibility
 
